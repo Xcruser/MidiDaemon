@@ -1,0 +1,171 @@
+{
+  "midi": {
+    "input_port": "",
+    "channel": -1,
+    "timeout": 30
+  },
+  "general": {
+    "log_level": "info",
+    "auto_restart": true,
+    "action_delay": 100
+  },
+  "mappings": [
+    {
+      "name": "Volume Up",
+      "enabled": true,
+      "event": {
+        "type": "control_change",
+        "controller": 7,
+        "value": 64
+      },
+      "action": {
+        "type": "volume",
+        "parameters": {
+          "direction": "up",
+          "percent": 5
+        }
+      }
+    },
+    {
+      "name": "Volume Down",
+      "enabled": true,
+      "event": {
+        "type": "control_change",
+        "controller": 7,
+        "value": 0
+      },
+      "action": {
+        "type": "volume",
+        "parameters": {
+          "direction": "down",
+          "percent": 5
+        }
+      }
+    },
+    {
+      "name": "Start OBS",
+      "enabled": true,
+      "event": {
+        "type": "note_on",
+        "note": 60,
+        "velocity": 100
+      },
+      "action": {
+        "type": "app_start",
+        "parameters": {
+          "path": "obs",
+          "args": ["--startstreaming"]
+        }
+      }
+    },
+    {
+      "name": "Mute/Unmute",
+      "enabled": true,
+      "event": {
+        "type": "note_on",
+        "note": 61,
+        "velocity": 100
+      },
+      "action": {
+        "type": "volume",
+        "parameters": {
+          "direction": "mute"
+        }
+      }
+    },
+    {
+      "name": "Switch Audio Source",
+      "enabled": true,
+      "event": {
+        "type": "program_change",
+        "program": 1
+      },
+      "action": {
+        "type": "audio_source",
+        "parameters": {
+          "type": "cycle"
+        }
+      }
+    },
+    {
+      "name": "Screenshot",
+      "enabled": true,
+      "event": {
+        "type": "note_on",
+        "note": 62,
+        "velocity": 100
+      },
+      "action": {
+        "type": "key_combination",
+        "parameters": {
+          "keys": ["CTRL", "SHIFT", "S"],
+          "type": "combination"
+        }
+      }
+    },
+    {
+      "name": "Copy",
+      "enabled": true,
+      "event": {
+        "type": "note_on",
+        "note": 63,
+        "velocity": 100
+      },
+      "action": {
+        "type": "key_combination",
+        "parameters": {
+          "keys": ["CTRL", "C"],
+          "type": "combination"
+        }
+      }
+    },
+    {
+      "name": "Paste",
+      "enabled": true,
+      "event": {
+        "type": "note_on",
+        "note": 64,
+        "velocity": 100
+      },
+      "action": {
+        "type": "key_combination",
+        "parameters": {
+          "keys": ["CTRL", "V"],
+          "type": "combination"
+        }
+      }
+    },
+    {
+      "name": "Undo",
+      "enabled": true,
+      "event": {
+        "type": "note_on",
+        "note": 65,
+        "velocity": 100
+      },
+      "action": {
+        "type": "key_combination",
+        "parameters": {
+          "keys": ["CTRL", "Z"],
+          "type": "combination"
+        }
+      }
+    },
+    {
+      "name": "Redo",
+      "enabled": true,
+      "event": {
+        "type": "note_on",
+        "note": 66,
+        "velocity": 100
+      },
+      "action": {
+        "type": "key_combination",
+        "parameters": {
+          "keys": ["CTRL", "Y"],
+          "type": "combination"
+        }
+      }
+    }
+  ]
+} 
