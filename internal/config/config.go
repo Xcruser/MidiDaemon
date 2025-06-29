@@ -13,10 +13,10 @@ import (
 type Config struct {
 	// MIDI-Einstellungen
 	MIDI MIDIConfig `json:"midi"`
-	
+
 	// Mappings zwischen MIDI-Events und Aktionen
 	Mappings []Mapping `json:"mappings"`
-	
+
 	// Allgemeine Einstellungen
 	General GeneralConfig `json:"general"`
 }
@@ -25,10 +25,10 @@ type Config struct {
 type MIDIConfig struct {
 	// Port-Name für MIDI-Eingabe (optional, verwendet ersten verfügbaren Port wenn leer)
 	InputPort string `json:"input_port"`
-	
+
 	// MIDI-Kanal (0-15, -1 für alle Kanäle)
 	Channel int `json:"channel"`
-	
+
 	// Timeout für MIDI-Verbindung in Sekunden
 	Timeout int `json:"timeout"`
 }
@@ -37,13 +37,13 @@ type MIDIConfig struct {
 type Mapping struct {
 	// Name des Mappings (für Logging und Debugging)
 	Name string `json:"name"`
-	
+
 	// MIDI-Event Definition
 	Event MIDIEvent `json:"event"`
-	
+
 	// Systemaktion die ausgeführt werden soll
 	Action Action `json:"action"`
-	
+
 	// Aktiviert/Deaktiviert
 	Enabled bool `json:"enabled"`
 }
@@ -52,19 +52,19 @@ type Mapping struct {
 type MIDIEvent struct {
 	// Typ des Events: "note_on", "note_off", "control_change", "program_change"
 	Type string `json:"type"`
-	
+
 	// MIDI-Note (0-127) für Note Events
 	Note int `json:"note,omitempty"`
-	
+
 	// Controller-Nummer (0-127) für Control Change Events
 	Controller int `json:"controller,omitempty"`
-	
+
 	// Program-Nummer (0-127) für Program Change Events
 	Program int `json:"program,omitempty"`
-	
+
 	// Velocity-Schwellwert für Note Events (0-127)
 	Velocity int `json:"velocity,omitempty"`
-	
+
 	// Controller-Wert-Schwellwert für Control Change Events (0-127)
 	Value int `json:"value,omitempty"`
 }
@@ -73,7 +73,7 @@ type MIDIEvent struct {
 type Action struct {
 	// Typ der Aktion: "volume", "app_start", "key_combination", "audio_source"
 	Type string `json:"type"`
-	
+
 	// Parameter für die Aktion (abhängig vom Typ)
 	Parameters map[string]interface{} `json:"parameters"`
 }
@@ -82,10 +82,10 @@ type Action struct {
 type GeneralConfig struct {
 	// Log-Level: "debug", "info", "warn", "error"
 	LogLevel string `json:"log_level"`
-	
+
 	// Automatischer Neustart bei Fehlern
 	AutoRestart bool `json:"auto_restart"`
-	
+
 	// Verzögerung zwischen Aktionen in Millisekunden
 	ActionDelay int `json:"action_delay"`
 }
@@ -237,4 +237,29 @@ func validateAction(action *Action) error {
 	}
 
 	return nil
-} 
+}
+
+// Save speichert die Konfiguration in eine JSON-Datei
+func Save(configPath string, config *Config) error {
+	// Absoluten Pfad erstellen
+	absPath, err := filepath.Abs(configPath)
+	if err != nil {
+		return fmt.Errorf("ungültiger Konfigurationspfad: %w", err)
+	}
+
+	// Datei erstellen/überschreiben
+	file, err := os.Create(absPath)
+	if err != nil {
+		return fmt.Errorf("konnte Konfigurationsdatei nicht erstellen: %w", err)
+	}
+	defer file.Close()
+
+	// JSON kodieren
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(config); err != nil {
+		return fmt.Errorf("fehler beim Schreiben der Konfigurationsdatei: %w", err)
+	}
+
+	return nil
+}

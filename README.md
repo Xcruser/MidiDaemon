@@ -10,6 +10,7 @@ MidiDaemon ist ein in Go geschriebener Daemon, der MIDI-Controller-Eingaben empf
 
 - **Plattformübergreifend**: Unterstützt Windows und Linux
 - **Konfigurierbar**: JSON-basierte Mapping-Konfiguration
+- **Grafische Benutzeroberfläche**: Benutzerfreundliche GUI zur Konfiguration
 - **Verschiedene Aktionstypen**:
   - Lautstärkesteuerung (Volume Up/Down, Mute/Unmute)
   - Anwendungen starten
@@ -18,6 +19,26 @@ MidiDaemon ist ein in Go geschriebener Daemon, der MIDI-Controller-Eingaben empf
 - **Keine Laufzeit-Abhängigkeiten**: Statisch gebautes Binary
 - **Robust**: Graceful Shutdown und Fehlerbehandlung
 - **Logging**: Umfassendes Logging-System
+
+### Grafische Benutzeroberfläche
+
+MidiDaemon bietet eine moderne, plattformübergreifende GUI zur einfachen Konfiguration von MIDI-Mappings:
+
+- **Mapping-Übersicht**: Anzeige aller konfigurierten Mappings
+- **Mapping-Editor**: Einfaches Hinzufügen, Bearbeiten und Löschen von Mappings
+- **Live-Validierung**: Sofortige Überprüfung der Eingaben
+- **MIDI Learn Modus**: Automatische Erkennung von MIDI-Eingaben (geplant)
+- **Konfigurationsspeicherung**: Direktes Speichern in die config.json
+
+```bash
+# GUI starten
+make run-gui
+
+# GUI bauen
+make build-gui
+```
+
+Weitere Informationen zur GUI finden Sie in der [GUI-Dokumentation](docs/GUI.md).
 
 ## Installation
 

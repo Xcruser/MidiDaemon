@@ -229,4 +229,32 @@ security:
 # Vollständiger Check
 .PHONY: check
 check: fmt lint vet test
-	@echo "Alle Checks abgeschlossen" 
+	@echo "Alle Checks abgeschlossen"
+
+# GUI Build Targets
+.PHONY: build-gui build-gui-windows build-gui-linux build-gui-macos
+
+build-gui: build-gui-$(OS)
+
+build-gui-windows:
+	@echo "Building GUI for Windows..."
+	@mkdir -p build
+	@go build -ldflags="-s -w" -o build/mididaemon-gui.exe cmd/mididaemon-gui/main.go
+
+build-gui-linux:
+	@echo "Building GUI for Linux..."
+	@mkdir -p build
+	@go build -ldflags="-s -w" -o build/mididaemon-gui cmd/mididaemon-gui/main.go
+
+build-gui-macos:
+	@echo "Building GUI for macOS..."
+	@mkdir -p build
+	@go build -ldflags="-s -w" -o build/mididaemon-gui cmd/mididaemon-gui/main.go
+
+# Cross-compilation for GUI
+build-gui-all: build-gui-windows build-gui-linux build-gui-macos
+
+# Run GUI
+run-gui:
+	@echo "Running GUI..."
+	@go run cmd/mididaemon-gui/main.go 
