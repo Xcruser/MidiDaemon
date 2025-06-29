@@ -59,4 +59,6 @@ temp/
 mididaemon
 mididaemon.exe
 mididaemon-*
-config.local.json 
+config.local.json
+!cmd/mididaemon/
+!cmd/mididaemon-gui/
