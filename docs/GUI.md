@@ -1,103 +1,149 @@
-# MidiDaemon GUI
+# MidiDaemon Web-GUI
 
-Die MidiDaemon GUI ist eine benutzerfreundliche Web-basierte Oberfläche zur Konfiguration von MIDI-Mappings.
+Die MidiDaemon Web-GUI bietet eine benutzerfreundliche Oberfläche zur Konfiguration von MIDI-Controller-Mappings. Sie läuft als Web-Server und kann über jeden modernen Browser aufgerufen werden.
 
 ## Features
 
-- **Mapping-Übersicht**: Anzeige aller konfigurierten MIDI-Mappings in einer übersichtlichen Tabelle
-- **Mapping-Editor**: Einfaches Hinzufügen, Bearbeiten und Löschen von Mappings über ein Modal-Dialog
-- **Live-Validierung**: Sofortige Überprüfung der Eingaben auf Gültigkeit
-- **Konfigurationsspeicherung**: Direktes Speichern der Änderungen in die config.json
-- **Plattformübergreifend**: Funktioniert auf allen Plattformen über den Webbrowser
-- **Responsive Design**: Moderne, benutzerfreundliche Oberfläche
+### Mapping-Verwaltung
+- **Mapping-Übersicht**: Alle konfigurierten Mappings anzeigen
+- **Mapping-Editor**: Neue Mappings erstellen und bestehende bearbeiten
+- **Live-Validierung**: Sofortige Überprüfung der Eingaben
+- **Speichern/Laden**: Konfiguration in `config.json` speichern
 
-## Installation
+### Controller-Erkennung
+- **Automatische Erkennung**: MIDI-Controller automatisch erkennen
+- **Geräte-Informationen**: Hersteller, Modell, Typ und Fähigkeiten anzeigen
+- **Controller-Einstellungen**: Gerätespezifische Konfiguration
+- **Vorgeschlagene Mappings**: Intelligente Mapping-Vorschläge basierend auf Controller-Typ
+
+## Installation und Start
 
 ### Voraussetzungen
+- Go 1.24 oder höher
+- MIDI-Controller (optional für Tests)
 
-- Go 1.24.4 oder höher
-- Webbrowser (Chrome, Firefox, Safari, Edge)
-
-### Build
-
+### Kompilieren
 ```bash
-# GUI für aktuelle Plattform bauen
-make build-gui
-
-# GUI für alle Plattformen bauen
-make build-gui-all
-
-# GUI direkt ausführen
-make run-gui
+# Im Projektverzeichnis
+cd cmd/mididaemon-gui
+go build -o mididaemon-gui.exe .
 ```
 
-### Manueller Build
-
+### Starten
 ```bash
-# Abhängigkeiten installieren
-go mod tidy
+# GUI starten
+./mididaemon-gui.exe
 
-# GUI bauen
-go build -o mididaemon-gui cmd/mididaemon-gui/main.go
-
-# GUI ausführen
-./mididaemon-gui
+# Oder mit Makefile
+make gui
 ```
+
+Die GUI ist dann unter `http://localhost:8080` erreichbar.
 
 ## Verwendung
 
-### Starten der GUI
+### Mappings-Tab
 
-```bash
-# Über Makefile
-make run-gui
-
-# Direkt
-go run cmd/mididaemon-gui/main.go
-
-# Gebautes Binary
-./mididaemon-gui
-```
-
-Die GUI startet einen lokalen Web-Server auf Port 8080. Öffnen Sie Ihren Browser und navigieren Sie zu:
-
-```
-http://localhost:8080
-```
-
-### Mapping hinzufügen
-
-1. Klicken Sie auf "Mapping hinzufügen" in der Toolbar
-2. Füllen Sie das Formular aus:
+#### Mapping erstellen
+1. Klicken Sie auf "Neues Mapping"
+2. Füllen Sie die Felder aus:
    - **Name**: Beschreibender Name für das Mapping
-   - **Event Typ**: Art des MIDI-Events (note_on, note_off, control_change, program_change)
-   - **MIDI Note**: MIDI-Note (0-127)
-   - **Action Typ**: Art der Aktion (volume, app_start, key_combination, audio_source)
-   - **Parameter**: Parameter für die Aktion
-   - **Aktiviert**: Checkbox zum Aktivieren/Deaktivieren des Mappings
+   - **Event Typ**: Art des MIDI-Events (Note On, Control Change, etc.)
+   - **Event-Parameter**: Abhängig vom Event-Typ (Note, Controller, Velocity, etc.)
+   - **Aktion Typ**: Art der Systemaktion (Volume, App Start, etc.)
+   - **Aktions-Parameter**: Abhängig vom Aktionstyp
 3. Klicken Sie auf "Speichern"
 
-### Mapping bearbeiten
-
+#### Mapping bearbeiten
 1. Klicken Sie auf "Bearbeiten" neben dem gewünschten Mapping
 2. Ändern Sie die gewünschten Werte im Modal-Dialog
 3. Klicken Sie auf "Speichern"
 
-### Mapping löschen
-
+#### Mapping löschen
 1. Klicken Sie auf "Löschen" neben dem gewünschten Mapping
 2. Bestätigen Sie die Löschung im Bestätigungsdialog
 
-### Konfiguration speichern
-
+#### Konfiguration speichern
 - Klicken Sie auf "Speichern" in der Toolbar
 - Die Konfiguration wird automatisch in `config.json` gespeichert
 - Eine Bestätigungsmeldung wird angezeigt
 
-### Aktualisieren
-
+#### Aktualisieren
 - Klicken Sie auf "Aktualisieren" um die Mapping-Liste neu zu laden
 - Nützlich wenn die Konfiguration von außen geändert wurde
+
+### Controller-Tab
+
+#### Controller erkennen
+1. Klicken Sie auf "Controller erkennen"
+2. Das System scannt automatisch alle verfügbaren MIDI-Ports
+3. Erkannte Controller werden mit Details angezeigt
+
+#### Controller-Informationen
+Jeder erkannte Controller zeigt:
+- **Name und Hersteller**: Identifikation des Geräts
+- **Typ**: Keyboard, Pad, Knob, Slider, Mixer, DJ, etc.
+- **Status**: Verbunden/Getrennt
+- **Fähigkeiten**: Anzahl Tasten, Drehregler, Pads, etc.
+- **Spezielle Features**: Display, Transport-Controls, etc.
+
+#### Controller-Einstellungen
+1. Klicken Sie auf "Einstellungen" bei einem Controller
+2. Konfigurieren Sie:
+   - **Standard-Kanal**: MIDI-Kanal (0-15)
+   - **Velocity-sensitiv**: Velocity-Informationen verwenden
+   - **Druck-sensitiv**: Aftertouch/Expression verwenden
+   - **Automatisches Mapping**: Vorgeschlagene Mappings automatisch anwenden
+3. Klicken Sie auf "Speichern"
+
+#### Vorgeschlagene Mappings
+1. Klicken Sie auf "Vorschläge" bei einem Controller
+2. Das System zeigt intelligente Mapping-Vorschläge basierend auf:
+   - Controller-Typ (Keyboard, Pad, etc.)
+   - Verfügbare Fähigkeiten
+   - Häufige Anwendungsfälle
+3. Klicken Sie auf "Mapping hinzufügen" um einen Vorschlag zu übernehmen
+4. Das Mapping-Formular wird automatisch ausgefüllt
+
+## Unterstützte Controller
+
+### Akai Professional
+- **MPK Mini**: 25 Tasten, 8 Drehregler, 8 Pads
+- **MPK249**: 49 Tasten, 8 Drehregler, 16 Pads, 8 Schieberegler
+- **MPX**: 16 Pads mit Display
+
+### Native Instruments
+- **Traktor Kontrol**: DJ-Controller mit Transport-Controls
+- **Maschine**: Drum Machine mit 16 Pads
+
+### Behringer
+- **X32**: Digitaler Mixer mit 32 Fadern
+- **XR18**: Kompakter Mixer mit 18 Fadern
+
+### Arturia
+- **KeyLab**: Keyboard mit 61 Tasten, 9 Drehregler/Schieberegler
+- **BeatStep**: Drum Machine mit 16 Pads und 16 Drehreglern
+
+### Novation
+- **LaunchKey Mini**: 25 Tasten, 8 Drehregler, 16 Pads
+- **LaunchKey 49/61**: Erweiterte Versionen
+- **LaunchPad**: 64 Pads mit Display
+
+### M-Audio
+- **Oxygen**: Keyboard mit 49 Tasten, 8 Drehregler, 9 Schieberegler
+
+### Korg
+- **Nano**: Kompakte Controller-Serie
+
+### Roland
+- **A-Serie**: Professionelle Keyboards mit Modulationsrad
+
+### Yamaha
+- **Motif**: Synthesizer mit 88 Tasten und Display
+
+### Generic Controller
+- Automatische Erkennung unbekannter MIDI-Controller
+- Basis-Funktionalität basierend auf Port-Namen
 
 ## Action-Typen und Parameter
 
@@ -129,12 +175,19 @@ Die GUI verwendet eine Web-basierte Architektur:
 
 ### API-Endpunkte
 
-- `GET /` - Hauptseite
+#### Mapping-Management
 - `GET /api/mappings` - Alle Mappings abrufen
 - `POST /api/save` - Konfiguration speichern
 - `POST /api/add` - Neues Mapping hinzufügen
 - `POST /api/edit` - Mapping bearbeiten
 - `POST /api/delete` - Mapping löschen
+
+#### Controller-Erkennung
+- `GET /api/controllers` - Alle erkannten Controller abrufen
+- `POST /api/discover` - Controller-Erkennung starten
+- `GET /api/controller/{id}` - Controller-Details abrufen
+- `PUT /api/controller/{id}` - Controller-Einstellungen aktualisieren
+- `GET /api/suggestions/{id}` - Vorgeschlagene Mappings abrufen
 
 ### Dateistruktur
 
@@ -144,6 +197,24 @@ cmd/mididaemon-gui/
 └── templates/
     └── index.html            # HTML-Template für die Benutzeroberfläche
 ```
+
+### Controller-Erkennung
+
+Das System verwendet intelligente Pattern-Matching-Algorithmen:
+
+1. **Port-Scanning**: Alle verfügbaren MIDI-Ports werden gescannt
+2. **Pattern-Matching**: Port-Namen werden gegen bekannte Controller-Patterns geprüft
+3. **Capability-Detection**: Controller-Fähigkeiten werden basierend auf Modell erkannt
+4. **Settings-Management**: Gerätespezifische Einstellungen werden verwaltet
+
+### Vorgeschlagene Mappings
+
+Das System generiert intelligente Mapping-Vorschläge basierend auf:
+
+- **Controller-Typ**: Keyboard, Pad, Knob, etc.
+- **Verfügbare Fähigkeiten**: Anzahl Tasten, Drehregler, etc.
+- **Häufige Anwendungsfälle**: Volume-Control, Transport, etc.
+- **Priorität**: Wichtige Mappings werden zuerst vorgeschlagen
 
 ## Fehlerbehebung
 
@@ -155,45 +226,71 @@ cmd/mididaemon-gui/
 
 ### Browser kann nicht verbinden
 
-- Überprüfen Sie, ob der Server läuft: `http://localhost:8080`
-- Prüfen Sie Firewall-Einstellungen
-- Versuchen Sie einen anderen Port
+- Überprüfen Sie die Firewall-Einstellungen
+- Stellen Sie sicher, dass der Server läuft
+- Prüfen Sie die Konsolen-Ausgabe auf Fehler
 
-### Mappings werden nicht gespeichert
+### Controller werden nicht erkannt
 
-- Überprüfen Sie die Schreibrechte im Projektverzeichnis
-- Stellen Sie sicher, dass `config.json` existiert und beschreibbar ist
-- Prüfen Sie die Browser-Konsole auf JavaScript-Fehler
+- Überprüfen Sie die MIDI-Verbindung
+- Stellen Sie sicher, dass der Controller eingeschaltet ist
+- Prüfen Sie die Treiber-Installation
+- Verwenden Sie "Controller erkennen" erneut
 
-### Template-Datei nicht gefunden
+### Mappings funktionieren nicht
 
-- Stellen Sie sicher, dass `cmd/mididaemon-gui/templates/index.html` existiert
-- Überprüfen Sie den Arbeitsverzeichnis-Pfad
+- Überprüfen Sie die Konfigurationsdatei
+- Prüfen Sie die Logs auf Fehler
+- Testen Sie die MIDI-Verbindung separat
+
+### Performance-Probleme
+
+- Reduzieren Sie die Anzahl der Mappings
+- Deaktivieren Sie nicht verwendete Mappings
+- Überprüfen Sie die System-Ressourcen
+
+## Erweiterte Funktionen
+
+### Automatisches Mapping
+
+Bei aktiviertem "Automatisches Mapping" werden neue Controller automatisch mit sinnvollen Standard-Mappings konfiguriert.
+
+### Custom Mappings
+
+Controller-spezifische benutzerdefinierte Mappings können in den Controller-Einstellungen konfiguriert werden.
+
+### Multi-Controller-Support
+
+Das System unterstützt mehrere gleichzeitig angeschlossene Controller und verwaltet sie unabhängig voneinander.
+
+### Backup und Restore
+
+Die Konfiguration wird automatisch in `config.json` gespeichert und kann einfach gesichert/restauriert werden.
 
 ## Entwicklung
 
-### Erweitern der GUI
+### Lokale Entwicklung
 
-Um neue Features hinzuzufügen:
+```bash
+# Entwicklungsserver starten
+cd cmd/mididaemon-gui
+go run main.go
 
-1. Erweitern Sie die API-Endpunkte in `main.go`
-2. Fügen Sie neue UI-Komponenten in `templates/index.html` hinzu
-3. Implementieren Sie die JavaScript-Logik
-4. Aktualisieren Sie die Dokumentation
+# Mit Hot-Reload (falls verfügbar)
+air
+```
 
-### Styling anpassen
+### Debugging
 
-Die GUI verwendet CSS3 für das Styling. Änderungen können in der `<style>`-Sektion von `templates/index.html` vorgenommen werden.
+- Browser-Entwicklertools für Frontend-Debugging
+- Go-Logs für Backend-Debugging
+- MIDI-Monitoring für Controller-Tests
 
-### Neue Action-Typen
+### Erweiterungen
 
-Um neue Action-Typen hinzuzufügen:
+Die GUI ist modular aufgebaut und kann einfach erweitert werden:
 
-1. Erweitern Sie die Konfigurationsstruktur in `internal/config/config.go`
-2. Fügen Sie den neuen Typ zur Action-Typ-Auswahl in der GUI hinzu
-3. Implementieren Sie die Parameter-Logik im JavaScript
-4. Aktualisieren Sie die Validierung
-
-## Lizenz
-
-Die GUI steht unter der gleichen Lizenz wie das Hauptprojekt (MIT License). 
+- Neue Controller-Typen hinzufügen
+- Zusätzliche Action-Typen implementieren
+- UI-Komponenten erweitern
+- API-Endpunkte hinzufügen 

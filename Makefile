@@ -3,6 +3,7 @@
 
 # Variablen
 BINARY_NAME=mididaemon
+GUI_BINARY_NAME=mididaemon-gui
 VERSION=$(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 BUILD_TIME=$(shell date -u '+%Y-%m-%d_%H:%M:%S')
 GIT_COMMIT=$(shell git rev-parse HEAD 2>/dev/null || echo "unknown")
@@ -20,6 +21,10 @@ LDFLAGS=-ldflags "-X main.Version=$(VERSION) -X main.BuildTime=$(BUILD_TIME) -X 
 CMD_DIR=cmd/mididaemon
 BUILD_DIR=build
 DIST_DIR=dist
+
+# Plattformen
+PLATFORMS=windows linux darwin
+ARCHITECTURES=amd64 arm64
 
 # Standard-Target
 .PHONY: all
@@ -177,11 +182,6 @@ help:
 	@echo "  release          - Release-Paket erstellen"
 	@echo "  clean            - Aufräumen"
 	@echo "  help             - Diese Hilfe anzeigen"
-	@echo ""
-	@echo "Umgebungsvariablen:"
-	@echo "  GOOS             - Ziel-Betriebssystem (default: aktuelles OS)"
-	@echo "  GOARCH           - Ziel-Architektur (default: aktuelle Arch)"
-	@echo "  CGO_ENABLED      - CGO aktivieren (default: 1)"
 
 # Entwicklungs-Setup
 .PHONY: dev-setup

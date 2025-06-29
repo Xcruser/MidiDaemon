@@ -9,8 +9,8 @@ import (
 	"time"
 )
 
-// newMIDIPort erstellt einen plattformspezifischen MIDI-Port
-func newMIDIPort() (MIDIPort, error) {
+// NewMIDIPort erstellt einen plattformspezifischen MIDI-Port
+func NewMIDIPort() (MIDIPort, error) {
 	switch runtime.GOOS {
 	case "windows":
 		return newWindowsMIDIPort()
@@ -19,6 +19,11 @@ func newMIDIPort() (MIDIPort, error) {
 	default:
 		return nil, fmt.Errorf("plattform %s wird nicht unterstützt", runtime.GOOS)
 	}
+}
+
+// newMIDIPort erstellt einen plattformspezifischen MIDI-Port (interne Funktion)
+func newMIDIPort() (MIDIPort, error) {
+	return NewMIDIPort()
 }
 
 // Windows-spezifische Implementierung

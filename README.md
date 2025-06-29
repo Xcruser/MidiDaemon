@@ -1,52 +1,39 @@
 # MidiDaemon
 
-Ein plattformübergreifender MIDI-Controller-Daemon, der MIDI-Eingaben in Systemaktionen umsetzt.
+MidiDaemon ist ein plattformübergreifendes Go-Programm, das MIDI-Controller-Eingaben in Systemaktionen umsetzt. Es unterstützt Windows und Linux und bietet eine intuitive Web-GUI zur Konfiguration.
 
-## Übersicht
+## Features
 
-MidiDaemon ist ein in Go geschriebener Daemon, der MIDI-Controller-Eingaben empfängt und diese in konfigurierbare Systemaktionen umsetzt. Unterstützt werden Windows und Linux.
-
-### Features
-
-- **Plattformübergreifend**: Unterstützt Windows und Linux
+### Core-Funktionalität
+- **MIDI-Event-Verarbeitung**: Unterstützt Note On/Off, Control Change, Program Change
+- **Systemaktionen**: Volume-Steuerung, App-Start, Tastenkombinationen, Audio-Quellen-Wechsel
+- **Plattformübergreifend**: Windows und Linux Unterstützung
 - **Konfigurierbar**: JSON-basierte Mapping-Konfiguration
-- **Grafische Benutzeroberfläche**: Benutzerfreundliche GUI zur Konfiguration
-- **Verschiedene Aktionstypen**:
-  - Lautstärkesteuerung (Volume Up/Down, Mute/Unmute)
-  - Anwendungen starten
-  - Tastenkombinationen senden
-  - Audioquellen wechseln
-- **Keine Laufzeit-Abhängigkeiten**: Statisch gebautes Binary
-- **Robust**: Graceful Shutdown und Fehlerbehandlung
-- **Logging**: Umfassendes Logging-System
 
-### Grafische Benutzeroberfläche
+### Web-GUI
+- **Mapping-Verwaltung**: Intuitive Oberfläche für MIDI-Mappings
+- **Controller-Erkennung**: Automatische Erkennung angeschlossener MIDI-Controller
+- **Geräte-Informationen**: Hersteller, Modell, Typ und Fähigkeiten anzeigen
+- **Intelligente Vorschläge**: Mapping-Vorschläge basierend auf Controller-Typ
+- **Controller-Einstellungen**: Gerätespezifische Konfiguration
 
-MidiDaemon bietet eine moderne, plattformübergreifende GUI zur einfachen Konfiguration von MIDI-Mappings:
-
-- **Mapping-Übersicht**: Anzeige aller konfigurierten Mappings
-- **Mapping-Editor**: Einfaches Hinzufügen, Bearbeiten und Löschen von Mappings
-- **Live-Validierung**: Sofortige Überprüfung der Eingaben
-- **MIDI Learn Modus**: Automatische Erkennung von MIDI-Eingaben (geplant)
-- **Konfigurationsspeicherung**: Direktes Speichern in die config.json
-
-```bash
-# GUI starten
-make run-gui
-
-# GUI bauen
-make build-gui
-```
-
-Weitere Informationen zur GUI finden Sie in der [GUI-Dokumentation](docs/GUI.md).
+### Unterstützte Controller
+- **Akai Professional**: MPK Mini, MPK249, MPX
+- **Native Instruments**: Traktor Kontrol, Maschine
+- **Behringer**: X32, XR18
+- **Arturia**: KeyLab, BeatStep
+- **Novation**: LaunchKey, LaunchPad
+- **M-Audio**: Oxygen
+- **Korg**: Nano-Serie
+- **Roland**: A-Serie
+- **Yamaha**: Motif
+- **Generic Controller**: Automatische Erkennung unbekannter Geräte
 
 ## Installation
 
 ### Voraussetzungen
-
-- Go 1.21 oder höher
-- MIDI-Controller oder MIDI-Interface
-- Windows oder Linux
+- Go 1.24 oder höher
+- MIDI-Controller (optional)
 
 ### Build
 
@@ -56,16 +43,19 @@ git clone https://github.com/Xcruser/MidiDaemon.git
 cd MidiDaemon
 
 # Abhängigkeiten installieren
-go mod download
+go mod tidy
 
-# Binary bauen
+# Für aktuelle Plattform
 make build
 
-# Oder direkt mit Go
-go build -o mididaemon cmd/mididaemon/main.go
+# Für alle Plattformen
+make build-all
+
+# GUI bauen
+make gui
 ```
 
-### Cross-Compilation
+### Plattformspezifische Builds
 
 ```bash
 # Für Windows
@@ -77,9 +67,50 @@ make build-linux
 # Für macOS
 make build-darwin
 
-# Alle Plattformen
-make build-all
+# GUI für alle Plattformen
+make gui-all
 ```
+
+## Verwendung
+
+### Kommandozeile
+
+```bash
+# Mit Standard-Konfiguration
+./mididaemon
+
+# Mit spezifischer Konfigurationsdatei
+./mididaemon -config myconfig.json
+
+# Debug-Modus
+./mididaemon -debug
+```
+
+### Web-GUI
+
+```bash
+# GUI starten
+./mididaemon-gui
+
+# Oder mit Makefile
+make run-gui
+```
+
+Die GUI ist dann unter `http://localhost:8080` erreichbar.
+
+#### GUI-Features
+
+**Mappings-Tab:**
+- Mapping-Übersicht und -Verwaltung
+- Neues Mapping erstellen
+- Bestehende Mappings bearbeiten/löschen
+- Konfiguration speichern
+
+**Controller-Tab:**
+- Automatische Controller-Erkennung
+- Geräte-Informationen anzeigen
+- Controller-Einstellungen konfigurieren
+- Intelligente Mapping-Vorschläge
 
 ## Konfiguration
 
@@ -184,6 +215,34 @@ Unterstützte MIDI-Event-Typen:
 }
 ```
 
+## Controller-Erkennung
+
+### Automatische Erkennung
+
+Das System erkennt automatisch angeschlossene MIDI-Controller und zeigt:
+
+- **Hersteller und Modell**: Identifikation des Geräts
+- **Controller-Typ**: Keyboard, Pad, Knob, Slider, Mixer, DJ, etc.
+- **Fähigkeiten**: Anzahl Tasten, Drehregler, Pads, etc.
+- **Spezielle Features**: Display, Transport-Controls, etc.
+
+### Controller-Einstellungen
+
+Jeder Controller kann individuell konfiguriert werden:
+
+- **Standard-Kanal**: MIDI-Kanal (0-15)
+- **Velocity-sensitiv**: Velocity-Informationen verwenden
+- **Druck-sensitiv**: Aftertouch/Expression verwenden
+- **Automatisches Mapping**: Vorgeschlagene Mappings automatisch anwenden
+
+### Intelligente Vorschläge
+
+Das System generiert Mapping-Vorschläge basierend auf:
+
+- **Controller-Typ**: Keyboard, Pad, Knob, etc.
+- **Verfügbare Fähigkeiten**: Anzahl Tasten, Drehregler, etc.
+- **Häufige Anwendungsfälle**: Volume-Control, Transport, etc.
+
 ## Verwendung
 
 ### Grundlegende Verwendung
@@ -192,73 +251,24 @@ Unterstützte MIDI-Event-Typen:
 # Mit Standard-Konfiguration
 ./mididaemon
 
-# Mit benutzerdefinierter Konfiguration
+# Mit spezifischer Konfigurationsdatei
 ./mididaemon -config myconfig.json
 
-# Mit Debug-Ausgabe
-./mididaemon -verbose
-
-# Version anzeigen
-./mididaemon -version
+# Debug-Modus
+./mididaemon -debug -verbose
 ```
 
-### Kommandozeilen-Optionen
+### GUI-Verwendung
 
-- `-config string`: Pfad zur Konfigurationsdatei (default: "config.json")
-- `-verbose`: Ausführliche Logging-Ausgabe
-- `-version`: Version anzeigen
+1. **GUI starten**: `./mididaemon-gui`
+2. **Browser öffnen**: `http://localhost:8080`
+3. **Controller erkennen**: Klicken Sie auf "Controller erkennen"
+4. **Mappings erstellen**: Verwenden Sie die vorgeschlagenen Mappings oder erstellen Sie eigene
+5. **Konfiguration speichern**: Klicken Sie auf "Speichern"
 
-### Entwicklung
+### Beispiele
 
-```bash
-# Entwicklungs-Setup
-make dev-setup
-
-# Code formatieren
-make fmt
-
-# Tests ausführen
-make test
-
-# Linting
-make lint
-
-# Vollständiger Check
-make check
-```
-
-## Projektstruktur
-
-```
-MidiDaemon/
-├── cmd/
-│   └── mididaemon/
-│       └── main.go              # Einstiegspunkt
-├── internal/
-│   ├── config/
-│   │   └── config.go            # Konfigurationsverwaltung
-│   ├── midi/
-│   │   ├── handler.go           # MIDI-Event-Handler
-│   │   └── port.go              # Plattformspezifische MIDI-Ports
-│   └── actions/
-│       ├── manager.go           # Action-Manager
-│       ├── volume.go            # Volume-Executor
-│       ├── app_start.go         # App-Start-Executor
-│       ├── key_combination.go   # Key-Combination-Executor
-│       └── audio_source.go      # Audio-Source-Executor
-├── pkg/
-│   └── utils/
-│       ├── logger.go            # Logging-System
-│       └── platform.go          # Plattform-Erkennung
-├── config.json                  # Beispiel-Konfiguration
-├── Makefile                     # Build-System
-├── go.mod                       # Go-Module
-└── README.md                    # Diese Datei
-```
-
-## MIDI-Mapping-Beispiele
-
-### Grundlegende Lautstärkesteuerung
+#### Volume-Steuerung
 
 ```json
 {
@@ -277,7 +287,7 @@ MidiDaemon/
 }
 ```
 
-### Anwendung starten
+#### Anwendung starten
 
 ```json
 {
@@ -296,7 +306,7 @@ MidiDaemon/
 }
 ```
 
-### Tastenkombination
+#### Tastenkombination
 
 ```json
 {
@@ -359,6 +369,16 @@ make build-debug
 make run-debug
 ```
 
+### GUI-Entwicklung
+
+```bash
+# GUI im Development-Modus
+make dev-gui
+
+# GUI für alle Plattformen bauen
+make gui-all
+```
+
 ## Troubleshooting
 
 ### Häufige Probleme
@@ -375,61 +395,34 @@ make run-debug
    - Überprüfen Sie die Konfigurationsdatei
    - Prüfen Sie die Logs auf Fehler
 
+4. **Controller werden nicht erkannt**
+   - Überprüfen Sie die MIDI-Verbindung
+   - Stellen Sie sicher, dass der Controller eingeschaltet ist
+   - Prüfen Sie die Treiber-Installation
+
 ### Logs
 
-MidiDaemon erstellt detaillierte Logs. Bei Problemen:
-
 ```bash
-# Mit Debug-Ausgabe starten
-./mididaemon -verbose
+# Debug-Logs aktivieren
+./mididaemon -debug -verbose
 
-# Logs in Datei schreiben
-./mididaemon -config config.json > mididaemon.log 2>&1
+# Log-Level setzen
+./mididaemon -log-level debug
 ```
 
 ## Lizenz
 
-Dieses Projekt ist unter der MIT-Lizenz lizenziert. Siehe [LICENSE](LICENSE) für Details.
+Dieses Projekt steht unter der MIT-Lizenz. Siehe [LICENSE](LICENSE) für Details.
 
 ## Beitragen
 
-Beiträge sind willkommen! Bitte:
+Beiträge sind willkommen! Bitte lesen Sie die [Contributing Guidelines](CONTRIBUTING.md) für Details.
 
-1. Fork das Repository
-2. Erstellen Sie einen Feature-Branch
-3. Committen Sie Ihre Änderungen
-4. Pushen Sie den Branch
-5. Erstellen Sie einen Pull Request
+## Changelog
 
-### Entwicklungsrichtlinien
-
-- Folgen Sie den Go-Coding-Standards
-- Schreiben Sie Tests für neue Features
-- Aktualisieren Sie die Dokumentation
-- Verwenden Sie `make check` vor dem Commit
-
-## Roadmap
-
-- [ ] macOS-Unterstützung
-- [ ] Web-Interface für Konfiguration
-- [ ] Plugin-System für benutzerdefinierte Aktionen
-- [ ] MIDI-Learning-Modus
-- [ ] Hot-Reload der Konfiguration
-- [ ] Systemd-Service-Integration (Linux)
-- [ ] Windows-Service-Integration
-
-## Support
-
-Bei Fragen oder Problemen:
-
-1. Überprüfen Sie die [Issues](https://github.com/Xcruser/MidiDaemon/issues)
-2. Erstellen Sie ein neues Issue mit detaillierten Informationen
-3. Fügen Sie Logs und Konfiguration bei
-
-## Credits
-
-Entwickelt von [Xcruser](https://github.com/Xcruser)
-
----
-
-**Hinweis**: Dieses Projekt ist in der Entwicklung. Die API kann sich noch ändern.
+### v1.0.0
+- Initiale Version mit MIDI-Event-Verarbeitung
+- Web-GUI für Mapping-Verwaltung
+- Controller-Erkennung und -Verwaltung
+- Intelligente Mapping-Vorschläge
+- Plattformübergreifende Unterstützung
