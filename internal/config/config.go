@@ -27,10 +27,31 @@ type MIDIConfig struct {
 	InputPort string `json:"input_port"`
 
 	// MIDI-Kanal (0-15, -1 für alle Kanäle)
-	Channel int `json:"channel"`
+	Channel    int  `json:"channel"`
+	channelSet bool `json:"-"`
 
 	// Timeout für MIDI-Verbindung in Sekunden
 	Timeout int `json:"timeout"`
+}
+
+// UnmarshalJSON customizes decoding to detect whether the Channel field was set
+func (m *MIDIConfig) UnmarshalJSON(data []byte) error {
+	type Alias struct {
+		InputPort string `json:"input_port"`
+		Channel   *int   `json:"channel"`
+		Timeout   int    `json:"timeout"`
+	}
+	var a Alias
+	if err := json.Unmarshal(data, &a); err != nil {
+		return err
+	}
+	m.InputPort = a.InputPort
+	m.Timeout = a.Timeout
+	if a.Channel != nil {
+		m.Channel = *a.Channel
+		m.channelSet = true
+	}
+	return nil
 }
 
 // Mapping definiert eine Zuordnung zwischen MIDI-Event und Systemaktion
@@ -126,7 +147,7 @@ func Load(configPath string) (*Config, error) {
 // setDefaults setzt Standardwerte für fehlende Konfigurationsoptionen
 func setDefaults(config *Config) {
 	// MIDI-Standardwerte
-	if config.MIDI.Channel == 0 {
+	if !config.MIDI.channelSet {
 		config.MIDI.Channel = -1 // Alle Kanäle
 	}
 	if config.MIDI.Timeout == 0 {
