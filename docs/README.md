@@ -227,4 +227,4 @@ Jedes Mapping besteht aus:
 
 ---
 
-*Letzte Aktualisierung: $(date +%Y-%m-%d)* 
+*Letzte Aktualisierung: 2025-06-29*
