@@ -1,0 +1,49 @@
+name: Build and Publish Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag name for the release (e.g. v1.0.0)'
+        required: true
+        type: string
+      name:
+        description: 'Release name (optional)'
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+
+      - name: Build for Linux
+        run: GOOS=linux GOARCH=amd64 go build -o mididaemon-linux-amd64 ./cmd/mididaemon
+
+      - name: Build for Windows
+        run: GOOS=windows GOARCH=amd64 go build -o mididaemon-windows-amd64.exe ./cmd/mididaemon
+
+      - name: Build for macOS
+        run: GOOS=darwin GOARCH=amd64 go build -o mididaemon-darwin-amd64 ./cmd/mididaemon
+
+      - name: Package binaries
+        run: |
+          mkdir -p dist
+          tar -czf dist/mididaemon-${{ inputs.tag }}.tar.gz mididaemon-linux-amd64 mididaemon-windows-amd64.exe mididaemon-darwin-amd64
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ inputs.tag }}
+          name: ${{ inputs.name || inputs.tag }}
+          files: dist/mididaemon-${{ inputs.tag }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
