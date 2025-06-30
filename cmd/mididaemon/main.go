@@ -28,12 +28,22 @@ func main() {
 	verbose := flag.Bool("verbose", false, "Ausführliche Log-Ausgabe")
 	debug := flag.Bool("debug", false, "Aktiviere Debug-Modus")
 	logLevel := flag.String("log-level", "", "Log-Level (debug, info, warn, error)")
+	generateCfg := flag.Bool("generate-config", false, "Erzeugt eine Standard-Konfigurationsdatei")
 	showVersion := flag.Bool("version", false, "Versionsinformationen anzeigen")
 
 	flag.Parse()
 
 	if *showVersion {
 		printVersion()
+		return
+	}
+
+	if *generateCfg {
+		if err := config.GenerateDefaultFile(*configPath); err != nil {
+			fmt.Fprintf(os.Stderr, "Fehler beim Erzeugen der Konfiguration: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("Konfigurationsdatei %s erstellt\n", *configPath)
 		return
 	}
 

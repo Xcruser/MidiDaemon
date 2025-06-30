@@ -284,3 +284,61 @@ func Save(configPath string, config *Config) error {
 
 	return nil
 }
+
+// Default gibt eine Standard-Konfiguration zurück
+func Default() *Config {
+	return &Config{
+		MIDI: MIDIConfig{
+			Channel: -1,
+			Timeout: 30,
+		},
+		General: GeneralConfig{
+			LogLevel:    "info",
+			AutoRestart: true,
+			ActionDelay: 100,
+		},
+		Mappings: []Mapping{
+			{
+				Name:    "Volume Up",
+				Enabled: true,
+				Event: MIDIEvent{
+					Type:       "control_change",
+					Controller: 7,
+					Value:      64,
+				},
+				Action: Action{
+					Type: "volume",
+					Parameters: map[string]interface{}{
+						"direction": "up",
+						"percent":   5,
+					},
+				},
+			},
+			{
+				Name:    "Volume Down",
+				Enabled: true,
+				Event: MIDIEvent{
+					Type:       "control_change",
+					Controller: 7,
+					Value:      0,
+				},
+				Action: Action{
+					Type: "volume",
+					Parameters: map[string]interface{}{
+						"direction": "down",
+						"percent":   5,
+					},
+				},
+			},
+		},
+	}
+}
+
+// GenerateDefaultFile speichert eine Standard-Konfiguration, wenn keine Datei existiert
+func GenerateDefaultFile(configPath string) error {
+	if _, err := os.Stat(configPath); err == nil {
+		return fmt.Errorf("Konfigurationsdatei %s existiert bereits", configPath)
+	}
+	cfg := Default()
+	return Save(configPath, cfg)
+}

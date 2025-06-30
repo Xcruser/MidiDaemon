@@ -1,0 +1,12 @@
+[Unit]
+Description=MidiDaemon background service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/mididaemon -config /etc/mididaemon/config.json
+Restart=on-failure
+User=mididaemon
+
+[Install]
+WantedBy=multi-user.target

@@ -84,6 +84,9 @@ make gui-all
 
 # Debug-Modus
 ./mididaemon -debug
+
+# Beispiel-Konfiguration erzeugen
+./mididaemon -generate-config
 ```
 
 ### Web-GUI
@@ -97,6 +100,15 @@ make run-gui
 ```
 
 Die GUI ist dann unter `http://localhost:8080` erreichbar.
+
+### Als systemd-Dienst
+
+Eine Beispiel-Service-Datei befindet sich in `docs/mididaemon.service`. Nach dem
+Kopieren nach `/etc/systemd/system/` kann der Dienst so aktiviert werden:
+
+```bash
+sudo systemctl enable --now mididaemon.service
+```
 
 #### GUI-Features
 
